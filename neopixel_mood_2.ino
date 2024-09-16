@@ -9,6 +9,19 @@ Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
 int red[3] = {255, 0, 0};
 int green[3] = {0, 255, 0};
 int blue[3] = {0, 0, 255};
+int yellow[3] = {255, 255, 0};
+int cyan[3] = {0, 255, 255};
+int magenta[3] = {255, 0, 255};
+
+int colors[6] =
+{
+  red,
+  green,
+  blue,
+  yellow,
+  cyan,
+  magenta
+};
 
 void setup() {
   strip.begin();
@@ -16,13 +29,24 @@ void setup() {
 }
 
 void loop() {
-  colorGradient(red, blue);
-  delay(10000);
-  colorGradient(blue, green);
-  delay(10000);
-  colorGradient(green, red);
-  delay(10000);
-  rainbow(15000, 20, 2.5);
+  randomSeed(analogRead(random(7)));
+  for (int i = 0; i < 15; i++)
+  {
+    int start_color = random(6);
+    int end_color = random(6);
+
+    while (start_color == end_color)
+    {
+      start_color = random(6);
+      end_color = random(6);
+    }
+    
+    colorGradientOn(colors[start_color], colors[end_color], 2);
+    delay(5000);
+    colorGradientOff(colors[start_color], colors[end_color], 2);
+  }
+  
+  rainbow(20000, 20, 2.5);
 }
 
 
@@ -69,4 +93,47 @@ void colorWiping(int repeat, int waiting) {
     int b = random(255);
     colorWipe(strip.Color(r, g, b), waiting);
   }
+}
+
+void colorGradientOn(int col_1[], int col_2[], int del)
+{
+  for (int j = 0; j <= 255; j++)
+  {
+    for (int i = 0; i < LED_COUNT; i++)
+    {
+      int red = map(i, 0, LED_COUNT, col_1[0], col_2[0]);
+      int green = map(i, 0, LED_COUNT, col_1[1], col_2[1]);
+      int blue = map(i, 0, LED_COUNT, col_1[2], col_2[2]);
+      
+      int b_red = map(j, 0, 255, 0, red);
+      int b_green = map(j, 0, 255, 0, green);
+      int b_blue = map(j, 0, 255, 0, blue);
+      
+      strip.setPixelColor(i, b_red, b_green, b_blue);
+    }
+    strip.show();
+  }
+  delay(del);
+}
+
+
+void colorGradientOff(int col_1[], int col_2[], int del)
+{
+  for (int j = 255; j >= 0; j--)
+  {
+    for (int i = 0; i < LED_COUNT; i++)
+    {
+      int red = map(i, 0, LED_COUNT, col_1[0], col_2[0]);
+      int green = map(i, 0, LED_COUNT, col_1[1], col_2[1]);
+      int blue = map(i, 0, LED_COUNT, col_1[2], col_2[2]);
+      
+      int b_red = map(j, 0, 255, 0, red);
+      int b_green = map(j, 0, 255, 0, green);
+      int b_blue = map(j, 0, 255, 0, blue);
+      
+      strip.setPixelColor(i, b_red, b_green, b_blue);
+    }
+    strip.show();
+  }
+  delay(del);
 }
