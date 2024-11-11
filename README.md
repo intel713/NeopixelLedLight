@@ -3,4 +3,4 @@
 
 # 사용 부품
 1 * `Arduino Nano`<br>
-25 * `Adafruit Neopixel`(IP30, 30led/m)
+25 * `Adafruit Neopixel`(IP30, 30led/m)<br>
