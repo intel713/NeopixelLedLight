@@ -4,7 +4,12 @@
 #define LED_COUNT 25
 #define BRIGHTNESS 255
 
+#define DELAY 5000
+
 Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+int start_color, end_color;
+int start_color_prev, end_color_prev;
 
 int red[3] = {255, 0, 0};
 int green[3] = {0, 255, 0};
@@ -12,8 +17,6 @@ int blue[3] = {0, 0, 255};
 int yellow[3] = {255, 255, 0};
 int cyan[3] = {0, 255, 255};
 int magenta[3] = {255, 0, 255};
-
-int start_color_prev = 0, end_color_prev = 1;
 
 int colors[6] =
 {
@@ -28,14 +31,20 @@ int colors[6] =
 void setup() {
   strip.begin();
   strip.setBrightness(255);
+  strip.clear();
+  strip.show();
+  start_color_prev = 0;
+  end_color_prev = 2;
+  colorGradientOn(colors[start_color_prev], colors[end_color_prev], 2);
+  delay(DELAY);
 }
 
 void loop() {
   randomSeed(analogRead(random(7)));
   for (int i = 0; i < 15; i++)
   {
-    int start_color = random(6);
-    int end_color = random(6);
+    start_color = random(6);
+    end_color = random(6);
 
     while (start_color == end_color)
     {
@@ -43,14 +52,15 @@ void loop() {
       end_color = random(6);
     }
     
-    //colorGradientOn(colors[start_color], colors[end_color], 2);
-    delay(5000);
-    //colorGradientOff(colors[start_color], colors[end_color], 2);
+    delay(DELAY);
     colorGradientChange(colors[start_color_prev], colors[end_color_prev], colors[start_color], colors[end_color], 1);
     start_color_prev = start_color;
     end_color_prev = end_color;
   }
-  
+  delay(DELAY);
+  colorGradientOff(colors[start_color], colors[end_color], 2);
+  delay(1000);
+
   rainbow(20000, 20, 2.5);
 }
 
